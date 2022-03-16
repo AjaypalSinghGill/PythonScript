@@ -2,7 +2,6 @@ import requests
 from tabulate import tabulate
 from datetime import date, timedelta
 
-
 def getTotalCostOfNthDay(n):
 	d = date.today() - timedelta(days=n)
 	startDate = d
@@ -40,9 +39,11 @@ response = requests.get('https://kubecost.k8s2.oyorooms.io/model/allocation?wind
 
 
 costMatrix = []
+costMatrixOfUnderPerforming = []
 
 tableHeader = ["Name", "CPU", "GPU", "RAM", "Efficiency"]
 costMatrix.append(tableHeader)
+costMatrixOfUnderPerforming.append(tableHeader)
 
 totalCpuCost = 0
 totalGpuCost = 0
@@ -61,6 +62,8 @@ for key, value in response.json()["data"][0].iteritems():
 	tableRow.append("$" + str(round(value['ramCost'], 2)))
 	tableRow.append(str(round(value['totalEfficiency'],2)))
 	costMatrix.append(tableRow)
+	if(value['totalEfficiency'] < .30):
+		costMatrixOfUnderPerforming.append(tableRow)
 	# print(key)
 	# print(value)
 # print(costMatrix)
@@ -76,7 +79,10 @@ costMatrix.append(totalCostRow)
 costMatrix.append(getTotalCostOfNthDay(2))
 costMatrix.append(getTotalCostOfNthDay(3))
 costMatrix.append(getTotalCostOfNthDay(9))
-print(tabulate(costMatrix, tablefmt='html'))
+table = tabulate(costMatrix, tablefmt='html')
+# table = table.replace("<table>", "<table border=\"1\"  class=\"dataframe\">")
+
+print(table)
 # for x in response.json()["data"]:
 
 webhook_url="https://oyoenterprise.webhook.office.com/webhookb2/ad40733b-2c8e-4d8a-833c-016e5d1d3030@04ec3963-dddc-45fb-afb7-85fa38e19b99/IncomingWebhook/65e3f90f975242ef87d4a6c28cca44d3/a3fa0b73-93cc-4cf0-945e-049bd89348e7"
@@ -89,14 +95,25 @@ responseWebhook = requests.post(
             "themeColor": "000000",
             "summary": "Cost metrics of all service",
             "sections": [{
-                "activityTitle": "Cost metrics of all service for past 24 hours",
-                "activitySubtitle": tabulate(costMatrix, tablefmt='html')
+                "activityTitle": "Cost metrics of all service",
+                "activitySubtitle": tabulate(costMatrix, headers="firstrow", tablefmt='grid')
             }],
         },
     )
 
 
-
+responseWebhook = requests.post(
+        url=webhook_url,
+        headers={"Content-Type": "application/json"},
+        json={
+            "themeColor": "000000",
+            "summary": "Cost metrics of under utilised services for last 24 hours(Efficiency less than 30%)",
+            "sections": [{
+                "activityTitle": "Cost metrics of under utilised services for last 24 hours(Efficiency less than 30%)",
+                "activitySubtitle": tabulate(costMatrixOfUnderPerforming, headers="firstrow", tablefmt='grid')
+            }],
+        },
+    )
   
 
 
