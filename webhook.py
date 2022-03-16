@@ -11,17 +11,7 @@ import pandas as pd
 
 url="https://oyoenterprise.webhook.office.com/webhookb2/ad40733b-2c8e-4d8a-833c-016e5d1d3030@04ec3963-dddc-45fb-afb7-85fa38e19b99/IncomingWebhook/65e3f90f975242ef87d4a6c28cca44d3/a3fa0b73-93cc-4cf0-945e-049bd89348e7"
 title="Automated Notification about kubecost"
-content = """
-The content of this notification is <i>special</i>.<br>
-It is the list of my favorite <b>fruits</b>
-<ul>
-<li>Lychee</li>
-<li>Orange</li>
-<li>Donuts</li>
-</ul>
-And also a demonstration of an HTML content used for a Teams notification<br>
-😍
-"""
+
 # r = requests.get("https://kubecost.k8s2.oyorooms.io/allocations.html?window=24h&agg=deployment&chartDisplay=series&idle=hide&rate=daily&filters=W3sicHJvcGVydHkiOiJuYW1lc3BhY2UiLCJ2YWx1ZSI6Im93bmRlbCJ9XQ%3D%3D")
 # print(r.text)
 content1="""
