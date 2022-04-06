@@ -1,8 +1,6 @@
 
 pipeline {
-    agent {
-        label "ap-se-1-master"
-    }
+    agent any
     stages {
         stage("Image build and push in China") {
             steps {
